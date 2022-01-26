@@ -38,7 +38,7 @@ class GroupMaking : AppCompatActivity() {
                 sqlDB.close()
                 Toast.makeText(applicationContext, "${edtName.text} 그룹이 생성되었습니다!", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(applicationContext, "인원수가 너무 많습니다! 4명 이하로 설정해 주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "인원수가 너무 많습니다. 4명 이하로 설정해 주세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
