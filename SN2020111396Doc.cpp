@@ -144,3 +144,113 @@ void CSN2020111396Doc::Dump(CDumpContext& dc) const
 
 
 // CSN2020111396Doc 명령
+
+
+void CSN2020111396Doc::TwoImgLoad()
+{
+	// TODO: 여기에 구현 코드 추가.
+	CFile file;
+	CFileDialog opendlg1(TRUE);
+	if (opendlg1.DoModal() == IDOK)
+	{
+		// 첫 번째 이미지 읽기
+		file.Open(opendlg1.GetFileName(), CFile::modeRead);
+		file.Read(m_InImg1, sizeof(m_InImg1));
+		file.Close();
+	}
+
+	CFileDialog opendlg2(TRUE);
+	if (opendlg1.DoModal() == IDOK)
+	{
+		// 두 번째 이미지 읽기
+		file.Open(opendlg2.GetFileName(), CFile::modeRead);
+		file.Read(m_InImg2, sizeof(m_InImg2));
+		file.Close();
+	}
+}
+
+
+void CSN2020111396Doc::m_ImgHisto(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int i, j, gv, vmax, vmin;
+	// 히스토그램 생성
+	for (i = 0; i < 256; i++) m_HistoArr[i] = 0; // 히스토그램 배열 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			gv = (int)m_InImg[i][j];
+			m_HistoArr[gv]++; // 밝기값에 따른 히스토그램 voting
+		}
+	}
+
+	// 히스토그램 정규화 (화면 출력을 위해)
+	vmin = 1000000; vmax = 0;
+	for (i = 0; i < 256; i++)
+	{
+		if (m_HistoArr[i] <= vmin) vmin = m_HistoArr[i];
+		if (m_HistoArr[i] >= vmax) vmax = m_HistoArr[i];
+	}
+	if (vmax == vmin) return;
+
+	float vd = (float)(vmax - vmin);
+	for (i = 0; i < 256; i++)
+	{
+		m_HistoArr[i] = (int)(((float)m_HistoArr[i] - vmin)*255.0 / vd);
+	}
+
+	// 히스토그램의 화면출력 (히스토그램 화면 출력을 위해 m_OutImg 사용)
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{	
+			m_OutImg[i][j] = 255;
+		}
+	}
+
+	// 검정색 테두리 만들기
+	for (i = 0; i < 256; i++)
+	{
+		for (j = 0; j < 256; j++)
+		{
+			m_OutImg[i][0] = 0;
+			m_OutImg[i][255] = 0;
+			m_OutImg[0][j] = 0;
+			m_OutImg[255][j] = 0;
+		}
+	}
+
+	for (j = 0; j < width; j++)
+	{
+		for (i = 0; i < m_HistoArr[j]; i++) m_OutImg[255 - i][j] = 0;
+	}
+}
+
+
+void CSN2020111396Doc::m_BinThres(int height, int width, int binThres)
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (m_InImg[i][j] > binThres) m_OutImg[i][j] = 255;
+			else m_OutImg[i][j] = 0;
+		}
+	}
+	UpdateAllViews(FALSE); // 화면 출력 갱신
+}
+
+
+void CSN2020111396Doc::m_bitSlicing(int height, int width, int bit)
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = (m_InImg[i][j] & (1 << bit)) ? 255 : 0;
+		}
+	}
+}

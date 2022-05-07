@@ -48,4 +48,12 @@ protected:
 public:
 	unsigned char m_InImg[256][256];
 	unsigned char m_OutImg[256][256];
+	void TwoImgLoad();
+	unsigned char m_InImg1[256][256];
+	unsigned char m_InImg2[256][256];
+	int m_HistoArr[256];
+	void m_ImgHisto(int height, int width);
+	void m_BinThres(int height, int width, int binThres);
+	int temp[256][256];
+	void m_bitSlicing(int height, int width, int bit);
 };

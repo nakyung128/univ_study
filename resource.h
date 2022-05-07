@@ -30,15 +30,36 @@
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   218
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
+#define IDD_DIALOG1                     310
+#define IDC_EDIT1                       1000
+#define IDC_SLIDER1                     1001
+#define IDC_BUTTON1                     1002
 #define IDM_REVERSE_IMG                 32771
+#define IDM_CONST_ADD                   32772
+#define IDM_CONST_SUB                   32773
+#define IDM_CONST_MUL                   32774
+#define IDM_CONST_DIV                   32775
+#define IDM_CONSTRSAT_UP                32779
+#define IDM_CONSTRAST_DOWN              32780
+#define IDM_SALTNPEPPER                 32781
+#define IDM_                            32782
+#define IDM_ADD_NOISE                   32783
+#define IDM_IMGHISTO                    32784
+#define IDM_BINARIZATION                32785
+#define IDM_BIN_DYNAMIC                 32786
+#define IDM_BIT_SEVEN                   32787
+#define IDM_BIT_FOUR                    32788
+#define IDM_BIT_ZERO                    32789
+#define IDM_MARK_INSERT                 32790
+#define IDM_MARK_DETECT                 32791
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32772
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_COMMAND_VALUE         32792
+#define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
