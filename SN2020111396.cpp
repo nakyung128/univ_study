@@ -228,14 +228,3 @@ void CSN2020111396App::LoadCustomState()
 void CSN2020111396App::SaveCustomState()
 {
 }
-
-// CSN2020111396App 메시지 처리기
-
-
-
-
-
-//void CAboutDlg::OnAddNoise()
-//{
-//	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-//}
