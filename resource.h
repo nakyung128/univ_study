@@ -52,13 +52,14 @@
 #define IDM_BIT_ZERO                    32789
 #define IDM_MARK_INSERT                 32790
 #define IDM_MARK_DETECT                 32791
+#define IDM_HISTO_EQUAL                 32792
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
-#define _APS_NEXT_COMMAND_VALUE         32792
+#define _APS_NEXT_COMMAND_VALUE         32793
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

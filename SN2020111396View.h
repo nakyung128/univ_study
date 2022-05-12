@@ -65,6 +65,7 @@ public:
 	afx_msg void OnBitZero();
 	afx_msg void OnMarkInsert();
 	afx_msg void OnMarkDetect();
+	afx_msg void OnHistoEqual();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전

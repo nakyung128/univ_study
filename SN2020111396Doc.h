@@ -56,4 +56,5 @@ public:
 	void m_BinThres(int height, int width, int binThres);
 	int temp[256][256];
 	void m_bitSlicing(int height, int width, int bit);
+	void m_HistoEqual(int height, int width);
 };

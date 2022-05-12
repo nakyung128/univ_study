@@ -254,3 +254,49 @@ void CSN2020111396Doc::m_bitSlicing(int height, int width, int bit)
 		}
 	}
 }
+
+
+void CSN2020111396Doc::m_HistoEqual(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int i, j;
+
+	// histogram 연산을 위해 사용할 배열 메모리를 할당
+	unsigned int *histogram = new unsigned int[256];
+	unsigned int *sum_hist = new unsigned int[256];
+
+	// histogram 배열을 초기화
+	for (i = 0; i < 256; i++) histogram[i] = 0;
+
+	// 영상의 히스토그램을 계산
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			histogram[m_InImg[i][j]]++;
+		}
+	}
+
+	int sum = 0;
+	float scale_factor = 255.0f / (float)(height*width);
+
+	// 히스토그램의 정규화된 합을 계산
+	for (i = 0; i < 256; i++)
+	{
+		sum += histogram[i];
+		sum_hist[i] = (int)((sum*scale_factor) + 0.5);
+	}
+
+	// LUT로써 정규화합 배열을 사용하여 영상을 변환
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = sum_hist[m_InImg[i][j]];
+		}
+	}
+
+	// 메모리 해제
+	delete[]histogram;
+	delete[]sum_hist;
+}
