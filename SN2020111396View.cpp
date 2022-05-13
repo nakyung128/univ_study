@@ -14,6 +14,7 @@
 #include "SN2020111396View.h"
 
 #include "CBinCntrlDlg.h"
+#include "CBlendCtrlDlg.h"
 
 #include<time.h>
 #include<stdlib.h>
@@ -51,6 +52,7 @@ BEGIN_MESSAGE_MAP(CSN2020111396View, CScrollView)
 	ON_COMMAND(IDM_MARK_INSERT, &CSN2020111396View::OnMarkInsert)
 	ON_COMMAND(IDM_MARK_DETECT, &CSN2020111396View::OnMarkDetect)
 	ON_COMMAND(IDM_HISTO_EQUAL, &CSN2020111396View::OnHistoEqual)
+	ON_COMMAND(IDM_IMG_BLEND, &CSN2020111396View::OnImgBlend)
 END_MESSAGE_MAP()
 
 // CSN2020111396View 생성/소멸
@@ -602,4 +604,18 @@ void CSN2020111396View::OnHistoEqual()
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	pDoc->m_HistoEqual(256, 256);
 	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnImgBlend()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->TwoImgLoad();
+	CBlendCtrlDlg pBlendCtrlDlg; // 슬라이드 컨트롤 클래스 변수 선언
+	pBlendCtrlDlg.DoModal();
 }

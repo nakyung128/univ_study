@@ -57,4 +57,5 @@ public:
 	int temp[256][256];
 	void m_bitSlicing(int height, int width, int bit);
 	void m_HistoEqual(int height, int width);
+	void ImageBlend(int height, int width, int alpha);
 };

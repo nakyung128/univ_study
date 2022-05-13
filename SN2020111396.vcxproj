@@ -188,6 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CBinCntrlDlg.h" />
+    <ClInclude Include="CBlendCtrlDlg.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
@@ -200,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CBinCntrlDlg.cpp" />
+    <ClCompile Include="CBlendCtrlDlg.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="pch.cpp">

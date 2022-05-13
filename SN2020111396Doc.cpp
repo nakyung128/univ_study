@@ -160,7 +160,7 @@ void CSN2020111396Doc::TwoImgLoad()
 	}
 
 	CFileDialog opendlg2(TRUE);
-	if (opendlg1.DoModal() == IDOK)
+	if (opendlg2.DoModal() == IDOK)
 	{
 		// 두 번째 이미지 읽기
 		file.Open(opendlg2.GetFileName(), CFile::modeRead);
@@ -299,4 +299,31 @@ void CSN2020111396Doc::m_HistoEqual(int height, int width)
 	// 메모리 해제
 	delete[]histogram;
 	delete[]sum_hist;
+}
+
+
+// 이미지 블렌드 함수
+void CSN2020111396Doc::ImageBlend(int height, int width, int alpha)
+{
+	// TODO: 여기에 구현 코드 추가.
+	FILE* infile = NULL;
+	errno_t err;
+
+	unsigned char m_bldImg[256][256];
+	fopen_s(&infile, "BABOON.raw", "rb");
+	fread(m_bldImg, sizeof(char), 256 * 256, infile);
+	fclose(infile);
+	
+	float w;
+	w = alpha / 255.0;
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			//m_OutImg[i][j] = w * m_bldImg[i][j] + (1 - w) * m_InImg[i][j];
+			m_OutImg[i][j] = w * m_InImg2[i][j] + (1 - w) * m_InImg1[i][j];
+		}
+	}
+	UpdateAllViews(FALSE); // 화면 출력 갱신
 }
