@@ -53,6 +53,10 @@ BEGIN_MESSAGE_MAP(CSN2020111396View, CScrollView)
 	ON_COMMAND(IDM_MARK_DETECT, &CSN2020111396View::OnMarkDetect)
 	ON_COMMAND(IDM_HISTO_EQUAL, &CSN2020111396View::OnHistoEqual)
 	ON_COMMAND(IDM_IMG_BLEND, &CSN2020111396View::OnImgBlend)
+	ON_COMMAND(IDM_FRM_ADD, &CSN2020111396View::OnFrmAdd)
+	ON_COMMAND(IDM_FRM_SUB, &CSN2020111396View::OnFrmSub)
+	ON_COMMAND(IDM_FRM_MUL, &CSN2020111396View::OnFrmMul)
+	ON_COMMAND(IDM_LUT_MUL, &CSN2020111396View::OnLutMul)
 END_MESSAGE_MAP()
 
 // CSN2020111396View 생성/소멸
@@ -618,4 +622,101 @@ void CSN2020111396View::OnImgBlend()
 	pDoc->TwoImgLoad();
 	CBlendCtrlDlg pBlendCtrlDlg; // 슬라이드 컨트롤 클래스 변수 선언
 	pBlendCtrlDlg.DoModal();
+}
+
+
+void CSN2020111396View::OnFrmAdd()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->TwoImgLoad();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int tempVal = pDoc->m_InImg1[i][j] + pDoc->m_InImg2[i][j];
+			tempVal = tempVal > 255 ? 255 : tempVal;
+			pDoc->m_OutImg[i][j] = (unsigned char)tempVal;
+		}
+	}
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnFrmSub()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->TwoImgLoad();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int tempVal = pDoc->m_InImg1[i][j] - pDoc->m_InImg2[i][j];
+			tempVal = tempVal > 255 ? 255 : tempVal;
+			tempVal = tempVal < 0 ? 0 : tempVal;
+			pDoc->m_OutImg[i][j] = (unsigned char)tempVal;
+		}
+	}
+	Invalidate(FALSE);
+}
+
+
+void CSN2020111396View::OnFrmMul()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->TwoImgLoad();
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int tempVal = pDoc->m_InImg1[i][j] & pDoc->m_InImg2[i][j];
+			tempVal = tempVal > 255 ? 255 : tempVal;
+			tempVal = tempVal < 0 ? 0 : tempVal;
+			pDoc->m_OutImg[i][j] = (unsigned char)tempVal;
+		}
+	}
+	Invalidate(FALSE);
+}
+
+
+void CSN2020111396View::OnLutMul()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	unsigned char LUT[256];
+
+	// LUT 값을 계산한다
+	for (int i = 0; i < 256; i++)
+	{
+		int temp = (int)((float)i*1.4);
+		LUT[i] = temp;
+	}
+
+	// LUT를 통하여 영상을 처리한다
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			pDoc->m_OutImg[i][j] = LUT[pDoc->m_InImg[i][j]];
+		}
+	}
+	Invalidate(FALSE); // 화면 갱신
 }

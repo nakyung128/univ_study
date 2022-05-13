@@ -56,13 +56,19 @@
 #define IDM_HISTO_EQUAL                 32792
 #define ID_32793                        32793
 #define IDM_IMG_BLEND                   32794
+#define IDM_FRM_ADD                     32795
+#define IDM_FRM_SUB                     32796
+#define IDM_FRM_MUL                     32797
+#define ID_32798                        32798
+#define IDM_FRM_                        32799
+#define IDM_LUT_MUL                     32800
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

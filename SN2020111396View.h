@@ -67,6 +67,10 @@ public:
 	afx_msg void OnMarkDetect();
 	afx_msg void OnHistoEqual();
 	afx_msg void OnImgBlend();
+	afx_msg void OnFrmAdd();
+	afx_msg void OnFrmSub();
+	afx_msg void OnFrmMul();
+	afx_msg void OnLutMul();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전
