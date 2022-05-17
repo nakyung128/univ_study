@@ -63,13 +63,15 @@
 #define IDM_FRM_                        32799
 #define IDM_LUT_MUL                     32800
 #define IDM_HISTO_STRETCH               32801
+#define ID_32802                        32802
+#define IDM_HISTOUP_STRETCH             32803
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32802
+#define _APS_NEXT_COMMAND_VALUE         32804
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

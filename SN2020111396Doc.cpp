@@ -357,3 +357,74 @@ void CSN2020111396Doc::m_HistoStretch(int height, int width)
 		}
 	}
 }
+
+
+void CSN2020111396Doc::m_HistoUpStretch(int height, int width, int lowPercent, int highPercent)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int i, j;
+
+	// 히스토그램 연산을 위해 사용할 배열을 할당
+	unsigned int *histogram = new unsigned int[256];
+
+	// 히스토그램 배열 초기화
+	for (i = 0; i < 256; i++) histogram[i] = 0;
+
+	// 영상의 히스토그램을 계산
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			histogram[m_InImg[i][j]]++;
+		}
+	}
+
+	// 0으로 만들 픽셀 비율에 대응하는 픽셀 밝기값 lowthresh
+	unsigned int runsum = 0;
+	int lowthresh = 0, highthresh = 255;
+	for (i = 0; i < height; i++)
+	{
+		runsum += histogram[i];
+		if ((runsum*100.0 / (float)(height*width)) >= lowPercent)
+		{
+			lowthresh = i;
+			break;
+		}
+	}
+
+	// 255로 만들 픽셀 비율에 대응하는 피셀 밝기값 highthresh
+	runsum = 0;
+	for (i = 255; i >= 0; i--)
+	{
+		runsum += histogram[i];
+		if ((runsum*100.0 / (float)(height*width)) >= highPercent)
+		{
+			highthresh = i;
+			break;
+		}
+	}
+
+	// 변환을 위한 LUT를 계산
+	unsigned char *LUT = new unsigned char[256];
+	for (i = 0; i < lowthresh; i++) LUT[i] = 0;
+	for (i = 255; i > highthresh; i--) LUT[i] = 255;
+
+	float scale = 255.0f / (float)(highthresh - lowthresh);
+	for (i = lowthresh; i <= highthresh; i++)
+	{
+		LUT[i] = (unsigned char)((i - lowthresh)*scale);
+	}
+
+	// LUT를 사용하여 영상 변환
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = LUT[m_InImg[i][j]];
+		}
+	}
+
+	// 메모리 해제
+	delete[]histogram;
+	delete[]LUT;
+}
