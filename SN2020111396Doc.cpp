@@ -13,6 +13,7 @@
 #include "SN2020111396Doc.h"
 
 #include <propkey.h>
+#include <cmath>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -392,7 +393,7 @@ void CSN2020111396Doc::m_HistoUpStretch(int height, int width, int lowPercent, i
 		}
 	}
 
-	// 255로 만들 픽셀 비율에 대응하는 피셀 밝기값 highthresh
+	// 255로 만들 픽셀 비율에 대응하는 픽셀 밝기값 highthresh
 	runsum = 0;
 	for (i = 255; i >= 0; i--)
 	{
@@ -427,4 +428,80 @@ void CSN2020111396Doc::m_HistoUpStretch(int height, int width, int lowPercent, i
 	// 메모리 해제
 	delete[]histogram;
 	delete[]LUT;
+}
+
+void CSN2020111396Doc::m_HistoSpec(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int i, j;
+	// 히스토그램 연산을 위해 사용할 배열을 할당
+	unsigned int *histogram = new unsigned int[256];
+	unsigned int *sum_hist = new unsigned int[256];
+	unsigned int *desired_histogram = new unsigned int[256];
+	unsigned int *desired_sum_hist = new unsigned int[256];
+
+	// 히스토그램 배열 초기화
+	for (i = 0; i < 256; i++) histogram[i] = desired_histogram[i] = 0;
+
+	// 영상의 히스토그램 계산
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			histogram[m_InImg[i][j]]++; // 입력 영상의 히스토그램
+			desired_histogram[m_InImg1[i][j]]++; // 지정 영상의 히스토그램
+		}
+	}
+
+	int sum = 0;
+	float scale_factor = 255.0f / (float)(height*width);
+
+	// 히스토그램의 정규화된 합을 계산
+	for (i = 0; i < 256; i++)
+	{
+		sum += histogram[i];
+		sum_hist[i] = (int)((sum*scale_factor) + 0.5);
+	}
+
+	// 지정 히스토그램에 대한 정규화된 합을 계산
+	sum = 0;
+	for (i = 0; i < 256; i++)
+	{
+		sum += desired_histogram[i];
+		desired_sum_hist[i] = (int)(sum*scale_factor);
+	}
+
+	// 가장 가까운 정규화합 히스토그램 값을 주는 index를 찾음
+	int *inv_hist = new int[256];
+	int hist_min, hist_index, hist_diff;
+	for (i = 0; i < 256; i++)
+	{
+		hist_min = 1000;
+		for (j = 0; j < 256; j++)
+		{
+			hist_diff = abs((int)(sum_hist[i] - desired_sum_hist[j]));
+			if (hist_diff < hist_min)
+			{
+				hist_min = hist_diff;
+				hist_index = j;
+			}
+		}
+		inv_hist[i] = hist_index; // 찾은 인덱스 저장
+	}
+
+	// 입력 영상의 변환 (역 히스토그램 변환)
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = inv_hist[m_InImg[i][j]];
+		}
+	}
+
+	// 메모리 해제
+	delete[] inv_hist;
+	delete[] histogram;
+	delete[] desired_histogram;
+	delete[] sum_hist;
+	delete[] desired_sum_hist;
 }

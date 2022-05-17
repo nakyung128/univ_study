@@ -73,6 +73,7 @@ public:
 	afx_msg void OnLutMul();
 	afx_msg void OnHistoStretch();
 	afx_msg void OnHistoUpStretch();
+	afx_msg void OnHistoSpec();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전

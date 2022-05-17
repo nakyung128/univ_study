@@ -59,6 +59,7 @@ BEGIN_MESSAGE_MAP(CSN2020111396View, CScrollView)
 	ON_COMMAND(IDM_LUT_MUL, &CSN2020111396View::OnLutMul)
 	ON_COMMAND(IDM_HISTO_STRETCH, &CSN2020111396View::OnHistoStretch)
 	ON_COMMAND(IDM_HISTOUP_STRETCH, &CSN2020111396View::OnHistoUpStretch)
+	ON_COMMAND(IDM_HISTO_SPEC, &CSN2020111396View::OnHistoSpec)
 END_MESSAGE_MAP()
 
 // CSN2020111396View 생성/소멸
@@ -752,4 +753,29 @@ void CSN2020111396View::OnHistoUpStretch()
 	// 도큐먼트 클래스에 있는 개선된 히스토그램 스트레칭 함수 호출
 	pDoc->m_HistoUpStretch(256, 256, 20, 20);
 	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnHistoSpec()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	CFile file;
+	CFileDialog opendlg1(TRUE);
+
+	if (opendlg1.DoModal() == IDOK)
+	{
+		// 첫 번째 이미지 읽기
+		file.Open(opendlg1.GetPathName(), CFile::modeRead);
+		file.Read(pDoc->m_InImg1, sizeof(pDoc->m_InImg1));
+		file.Close();
+	}
+
+	// 도큐먼트 클래스에 있는 히스토그램 지정 연산 함수 호출
+	pDoc->m_HistoSpec(256, 256);
+	Invalidate(FALSE);
 }

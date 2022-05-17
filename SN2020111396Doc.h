@@ -60,4 +60,5 @@ public:
 	void ImageBlend(int height, int width, int alpha);
 	void m_HistoStretch(int height, int width);
 	void m_HistoUpStretch(int height, int width, int lowPercent, int highPercent);
+	void m_HistoSpec(int height, int width);
 };
