@@ -154,7 +154,7 @@ void CSN2020111396Doc::TwoImgLoad()
 	if (opendlg1.DoModal() == IDOK)
 	{
 		// 첫 번째 이미지 읽기
-		file.Open(opendlg1.GetFileName(), CFile::modeRead);
+		file.Open(opendlg1.GetPathName(), CFile::modeRead);
 		file.Read(m_InImg1, sizeof(m_InImg1));
 		file.Close();
 	}
@@ -163,7 +163,7 @@ void CSN2020111396Doc::TwoImgLoad()
 	if (opendlg2.DoModal() == IDOK)
 	{
 		// 두 번째 이미지 읽기
-		file.Open(opendlg2.GetFileName(), CFile::modeRead);
+		file.Open(opendlg2.GetPathName(), CFile::modeRead);
 		file.Read(m_InImg2, sizeof(m_InImg2));
 		file.Close();
 	}
@@ -308,11 +308,6 @@ void CSN2020111396Doc::ImageBlend(int height, int width, int alpha)
 	// TODO: 여기에 구현 코드 추가.
 	FILE* infile = NULL;
 	errno_t err;
-
-	unsigned char m_bldImg[256][256];
-	fopen_s(&infile, "BABOON.raw", "rb");
-	fread(m_bldImg, sizeof(char), 256 * 256, infile);
-	fclose(infile);
 	
 	float w;
 	w = alpha / 255.0;
@@ -321,9 +316,44 @@ void CSN2020111396Doc::ImageBlend(int height, int width, int alpha)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			//m_OutImg[i][j] = w * m_bldImg[i][j] + (1 - w) * m_InImg[i][j];
 			m_OutImg[i][j] = w * m_InImg2[i][j] + (1 - w) * m_InImg1[i][j];
 		}
 	}
 	UpdateAllViews(FALSE); // 화면 출력 갱신
+}
+
+
+void CSN2020111396Doc::m_HistoStretch(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int i, j;
+	int lowvalue = 255, highvalue = 0;
+
+	// 가장 작은 밝기값 설정 
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			if (m_InImg[i][j] < lowvalue) lowvalue = m_InImg[i][j];
+		}
+	}
+
+	// 가장 큰 밝기값 설정
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			if (m_InImg[i][j] > highvalue) highvalue = m_InImg[i][j];
+		}
+	}
+
+	// Histogram 스트레칭 계산
+	float mult = 255.0f / (float)(highvalue - lowvalue);
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = (unsigned char)((m_InImg[i][j] - lowvalue)*mult);
+		}
+	}
 }
