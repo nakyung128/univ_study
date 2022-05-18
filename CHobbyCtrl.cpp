@@ -223,6 +223,7 @@ void CHobbyCtrl::OnClickedButtonResult()
 	if (m_bSex == true) GetDlgItemText(IDC_RADIO_MALE, pView->m_strSex);
 	else GetDlgItemText(IDC_RADIO_FEMALE, pView->m_strSex);
 
+	// str 변수에 계속 더해 주는 것이기 때문에 먼저 비워주기
 	pView->m_strHobby.Empty();
 	for (int i = 0; i < 3; i++)
 	{
