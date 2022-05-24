@@ -66,4 +66,6 @@ public:
 	void AdaptiveBinarization(unsigned char* orgImg, unsigned char* outImg, int height, int width);
 	afx_msg void OnBinarAdap();
 	void m_SmoothingBox(int height, int width);
+	void m_SharpeningLaplacian(int height, int width);
+	void SmoothingGaussian(int height, int width);
 };

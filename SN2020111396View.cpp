@@ -61,6 +61,8 @@ BEGIN_MESSAGE_MAP(CSN2020111396View, CScrollView)
 	ON_COMMAND(IDM_HISTOUP_STRETCH, &CSN2020111396View::OnHistoUpStretch)
 	ON_COMMAND(IDM_HISTO_SPEC, &CSN2020111396View::OnHistoSpec)
 	ON_COMMAND(IDM_SMOOTHING_BOX, &CSN2020111396View::OnSmoothingBox)
+	ON_COMMAND(IDM_SMOOTHING_GAUSSIAN, &CSN2020111396View::OnSmoothingGaussian)
+	ON_COMMAND(IDM_SHARPENING_LAPLACIAN, &CSN2020111396View::OnSharpeningLaplacian)
 END_MESSAGE_MAP()
 
 // CSN2020111396View 생성/소멸
@@ -791,5 +793,31 @@ void CSN2020111396View::OnSmoothingBox()
 
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	pDoc->m_SmoothingBox(256, 256);
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnSmoothingGaussian()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->SmoothingGaussian(256, 256);
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnSharpeningLaplacian()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->m_SharpeningLaplacian(256, 256);
 	Invalidate(FALSE); // 화면 갱신
 }

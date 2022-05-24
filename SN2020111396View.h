@@ -75,6 +75,8 @@ public:
 	afx_msg void OnHistoUpStretch();
 	afx_msg void OnHistoSpec();
 	afx_msg void OnSmoothingBox();
+	afx_msg void OnSmoothingGaussian();
+	afx_msg void OnSharpeningLaplacian();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전

@@ -724,3 +724,113 @@ void CSN2020111396Doc::m_SmoothingBox(int height, int width)
 		}
 	}
 }
+
+void CSN2020111396Doc::SmoothingGaussian(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int MaskBox[3][3] = { {1,2,1}, {2,4,2}, {1,2,1} }; // 3x3 박스 평활화 마스크
+	int heightml = height - 1; // 중복 계산을 피하기 위해 사용
+	int widthml = width - 1; // 중복 계산을 피하기 위해 사용
+	int mr, mc;
+	int newValue;
+	int i, j;
+
+	// 결과 이미지 0으로 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = 0;
+		}
+	}
+
+	for (i = 1; i < heightml; i++)
+	{
+		for (j = 1; j < widthml; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskBox[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			newValue /= 9; // 마스크의 합의 크기로 나누기: 값의 범위를 0에서 255로 함
+			m_OutImg[i][j] = (BYTE)newValue; // BYTE 값으로 변환
+		}
+	}
+}
+
+
+void CSN2020111396Doc::m_SharpeningLaplacian(int height, int width)
+{
+	int MaskBox[3][3] = { {-1,-1,-1}, {-1,8,-1}, {-1,-1,-1} };
+	int heightml = height - 1;
+	int widthml = width - 1;
+	int mr, mc, newValue, i, j, min, max;
+	int *pTmpImg;
+	float constVal1, constVal2;
+
+	// 정수값을 갖는 이미지 동적 메모리 할당
+	pTmpImg = new int[height*width];
+
+	// 결과 이미지 0으로 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = 0;
+			pTmpImg[i*width + j] = 0;
+		}
+	}
+
+	for (i = 1; i < heightml; i++)
+	{
+		for (j = 1; j < widthml; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskBox[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			// 값을 양수로 변환
+			if (newValue < 0) newValue = -newValue;
+			pTmpImg[i*width + j] = newValue;
+		}
+	}
+
+	// 디스플레이를 위해 0에서 255 사이로 값의 범위를 매핑
+	// 이를 위해 먼저 최대, 최소값을 찾은 후 이를 이용하여 매핑한다
+	min = (int)10e10;
+	max = (int)-10e10;
+	for (i = 1; i < heightml; i++)
+	{
+		for (j = 1; j < widthml; j++)
+		{
+			newValue = pTmpImg[i*width + j];
+			if (newValue < min)min = newValue;
+			if (newValue > max) max = newValue;
+		}
+	}
+
+	// 변환 시 상수값을 미리 계산
+	constVal1 = (float)(255.0 / (max - min));
+	constVal2 = (float)(-255.0 / (max - min));
+	for (i = 1; i < heightml; i++)
+	{
+		for (j = 1; j < widthml; j++)
+		{
+			// [min, max] 사이의 값을 [0, 255] 값으로 변환
+			newValue = pTmpImg[i*width + j];
+			newValue = constVal1 * newValue + constVal2;
+			m_OutImg[i][j] = (BYTE)newValue;
+		}
+	}
+
+	// 동적 할당 메모리 해제
+	delete[] pTmpImg;
+}
