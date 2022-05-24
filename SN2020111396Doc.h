@@ -61,4 +61,9 @@ public:
 	void m_HistoStretch(int height, int width);
 	void m_HistoUpStretch(int height, int width, int lowPercent, int highPercent);
 	void m_HistoSpec(int height, int width);
+	void Otzu_Threshold(unsigned char* orgImg, unsigned char* outImg, int height, int width);
+	afx_msg void OnBinarOtzu();
+	void AdaptiveBinarization(unsigned char* orgImg, unsigned char* outImg, int height, int width);
+	afx_msg void OnBinarAdap();
+	void m_SmoothingBox(int height, int width);
 };

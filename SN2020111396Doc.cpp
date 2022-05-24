@@ -24,6 +24,8 @@
 IMPLEMENT_DYNCREATE(CSN2020111396Doc, CDocument)
 
 BEGIN_MESSAGE_MAP(CSN2020111396Doc, CDocument)
+	ON_COMMAND(IDM_BINAR_OTZU, &CSN2020111396Doc::OnBinarOtzu)
+	ON_COMMAND(IDM_BINAR_ADAP, &CSN2020111396Doc::OnBinarAdap)
 END_MESSAGE_MAP()
 
 
@@ -504,4 +506,221 @@ void CSN2020111396Doc::m_HistoSpec(int height, int width)
 	delete[] desired_histogram;
 	delete[] sum_hist;
 	delete[] desired_sum_hist;
+}
+
+
+void CSN2020111396Doc::Otzu_Threshold(unsigned char* orgImg, unsigned char* outImg, int height, int width)
+{
+	register int i, t;
+
+	// Histogram set
+	int hist[256];
+	float prob[256];
+	for (i = 0; i < 256; i++)
+	{
+		hist[i] = 0;
+		prob[i] = 0.0f;
+	}
+	for (i = 0; i < height*width; i++) hist[(int)orgImg[i]]++;
+	for (i = 0; i < 256; i++) prob[i] = (float)hist[i] / (float)(height*width);
+
+	float wsv_min = 1000000.0f;
+	float wsv_u1, wsv_u2, wsv_s1, wsv_s2;
+	int wsv_t;
+
+	for (t = 0; t < 256; t++)
+	{
+		// q1, q2 계산
+		float q1 = 0.0f, q2 = 0.0f;
+
+		for (i = 0; i < t; i++) q1 += prob[i];
+		for (i = t; i < 256; i++) q2 += prob[i];
+		if (q1 == 0 || q2 == 0) continue;
+
+		// u1, u2 계산
+		float u1 = 0.0f, u2 = 0.0f;
+		for (i = 0; i < t; i++) u1 += i * prob[i];
+		u1 /= q1;
+		for (i = t; i < 256; i++) u2 += i * prob[i];
+		u2 /= q2;
+
+		// s1, s2 계산
+		float s1 = 0.0f, s2 = 0.0f;
+		for (i = 0; i < t; i++) s1 += (i - u1)*(i - u1)*prob[i];
+		s1 /= q1;
+		for (i = t; i < 256; i++) s2 += (i - u2)*(i - u2)*prob[i];
+		s2 /= q2;
+
+		float wsv = q1 * s1 + q2 * s2;
+
+		if (wsv < wsv_min)
+		{
+			wsv_min = wsv; wsv_t = t;
+			wsv_u1 = u1; wsv_u2 = u2;
+			wsv_s1 = s1; wsv_s2 = s2;
+		}
+	}
+
+	// thresholding
+	for (i = 0; i < height*width; i++)
+	{
+		if (orgImg[i] < wsv_t) outImg[i] = 0;
+		else outImg[i] = 255;
+	}
+}
+
+
+void CSN2020111396Doc::OnBinarOtzu()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	int height = 256, width = 256;
+	register int i, j;
+
+	unsigned char* orgImg = new unsigned char[height*width];
+	unsigned char* outImg = new unsigned char[height*width];
+
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			orgImg[i*width + j] = m_InImg[i][j];
+		}
+	}
+
+	Otzu_Threshold(orgImg, outImg, height, width);
+	
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = outImg[i*width + j];
+		}
+	}
+
+	delete[] orgImg;
+	delete[] outImg;
+
+	UpdateAllViews(NULL);
+}
+
+
+void CSN2020111396Doc::AdaptiveBinarization(unsigned char* orgImg, unsigned char* outImg, int height, int width)
+{
+	register int i, j, k, l;
+	int gval, index1, index2;
+	float mean, vari, thres;
+	int W = 20;
+
+	for (i = 0; i < height*width; i++) outImg[i] = 255;
+
+	for (i = 0; i < height; i++)
+	{
+		index2 = i * width;
+		for (j = 0; j < width; j++)
+		{
+			float gsum = 0.0f;
+			float ssum = 0.0f;
+			int count = 0;
+
+			for (k = i - W; k <= i + W; k++)
+			{
+				index1 = k * width;
+				if (k < 0 || k >= height) continue;
+
+				for (l = j - W; l <= j + W; l++)
+				{
+					if (l < 0 || l >= width) continue;
+
+					gval = orgImg[index1 + l];
+					gsum += gval;
+					ssum += gval * gval;
+					count++;
+				}
+			}
+
+			mean = gsum / (float)count;
+			vari = ssum / (float)count - mean * mean;
+
+			if (vari < 0) vari = 0.0f;
+
+			thres = mean * (1.0f - 0.02f*(1 - (float)sqrt(vari) / 128));
+
+			if (vari < 0) vari = 0.0f;
+
+			thres = mean * (1.0f - 0.02f*(1 - (float)sqrt(vari) / 128));
+
+			if (orgImg[index2 + j] < thres) outImg[index2 + j] = 0;
+		}
+	}
+}
+
+
+void CSN2020111396Doc::OnBinarAdap()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	int height = 256; int width = 256;
+	register int i, j;
+
+	unsigned char* orgImg = new unsigned char[height*width];
+	unsigned char* outImg = new unsigned char[height*width];
+
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			orgImg[i*width + j] = m_InImg[i][j];
+		}
+	}
+
+	AdaptiveBinarization(orgImg, outImg, height, width);
+
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = outImg[i*width + j];
+		}
+	}
+
+	delete[] orgImg;
+	delete[] outImg;
+
+	UpdateAllViews(NULL);
+}
+
+
+void CSN2020111396Doc::m_SmoothingBox(int height, int width)
+{
+	int MaskBox[3][3] = { {1,1,1}, {1,1,1}, {1,1,1} }; // 3x3 박스 평활화 마스크
+	int heightml = height - 1; // 중복 계산을 피하기 위해 사용
+	int widthml = width - 1; // 중복 계산을 피하기 위해 사용
+	int mr, mc;
+	int newValue;
+	int i, j;
+
+	// 결과 이미지 0으로 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = 0;
+		}
+	}
+
+	for (i = 1; i < heightml; i++)
+	{
+		for (j = 1; j < widthml; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskBox[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			newValue /= 9; // 마스크의 합의 크기로 나누기: 값의 범위를 0에서 255로 함
+			m_OutImg[i][j] = (BYTE)newValue; // BYTE 값으로 변환
+		}
+	}
 }
