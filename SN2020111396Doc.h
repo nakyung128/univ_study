@@ -68,4 +68,5 @@ public:
 	void m_SmoothingBox(int height, int width);
 	void m_SharpeningLaplacian(int height, int width);
 	void SmoothingGaussian(int height, int width);
+	void EdgePrewitt(int height, int width);
 };

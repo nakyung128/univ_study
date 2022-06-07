@@ -805,8 +805,10 @@ void CSN2020111396Doc::m_SharpeningLaplacian(int height, int width)
 
 	// 디스플레이를 위해 0에서 255 사이로 값의 범위를 매핑
 	// 이를 위해 먼저 최대, 최소값을 찾은 후 이를 이용하여 매핑한다
-	min = (int)10e10;
-	max = (int)-10e10;
+	// min = (int)10e10;
+	// max = (int)-10e10;
+	min = INT_MIN;
+	max = INT_MAX;
 	for (i = 1; i < heightml; i++)
 	{
 		for (j = 1; j < widthml; j++)
@@ -833,4 +835,10 @@ void CSN2020111396Doc::m_SharpeningLaplacian(int height, int width)
 
 	// 동적 할당 메모리 해제
 	delete[] pTmpImg;
+}
+
+// 에지 검출 함수 (Prewitt)
+void CSN2020111396Doc::EdgePrewitt(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
 }
