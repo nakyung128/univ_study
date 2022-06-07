@@ -841,4 +841,285 @@ void CSN2020111396Doc::m_SharpeningLaplacian(int height, int width)
 void CSN2020111396Doc::EdgePrewitt(int height, int width)
 {
 	// TODO: 여기에 구현 코드 추가.
+	int MaskPrewittX[3][3] = { {-1,0,1}, {-1,0,1}, {-1,0,1} };
+	int MaskPrewittY[3][3] = { {1,1,1}, {0,0,0}, {-1,-1,-1} };
+	int heightm1 = height - 1, widthm1 = width - 1;
+	int mr, mc, newValue, i, j;
+	int *pImgPrewittX, *pImgPrewittY;
+	int min, max, where;
+	float constVal1, constVal2;
+
+	// 정수값을 갖는 이미지 동적 메모리 할당
+	pImgPrewittX = new int[height*width];
+	pImgPrewittY = new int[height*width];
+
+	// 결과 이미지 0으로 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = 0;
+			where = i * width + j;
+			pImgPrewittX[where] = 0;
+			pImgPrewittY[where] = 0;
+		}
+	}
+
+	// X 방향 에지 강도 계산
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskPrewittX[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			pImgPrewittX[i*width + j] = newValue;
+		}
+	}
+
+	// Y 방향 에지 강도 계산
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskPrewittY[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			pImgPrewittY[i*width + j] = newValue;
+		}
+	}
+
+	// 에지 강도 계산 절대값(X) + 절대값 (Y) 후 pImgPrewittX[]에 저장
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			where = i * width + j;
+			constVal1 = pImgPrewittX[where];
+			constVal2 = pImgPrewittY[where];
+			if (constVal1 < 0) constVal1 = -constVal1;
+			if (constVal2 < 0) constVal2 = -constVal2;
+			pImgPrewittX[where] = constVal1 + constVal2;
+		}
+	}
+
+	// 디스플레이를 위해 0에서 255 사이로 값의 범위를 매핑
+	// 이를 위해 먼저 최대, 최소값을 찾은 후 이를 이용하여 매핑한다
+	min = (int)10e10;
+	max = (int)-10e10;
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue += pImgPrewittX[i*width + j];
+			if (newValue < min) min = newValue;
+			if (newValue > max) max = newValue;
+		}
+	}
+
+	// 변환 시 상수값을 미리 계산
+	constVal1 = (float)(255.0 / (max - min));
+	constVal2 = (float)(-255.0*min / (max - min));
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			// [min, max] 사이의 값을 [0, 255] 값으로 변환
+			newValue = pImgPrewittX[i*width + j];
+			newValue = constVal1 * newValue + constVal2;
+			m_OutImg[i][j] = (BYTE)newValue;
+		}
+	}
+
+	// 동적 할당 메모리 삭제
+	delete[] pImgPrewittX;
+	delete[] pImgPrewittY;
+}
+
+
+void CSN2020111396Doc::ZoomOut(int height, int width, float zoomoutfactor)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int heightm1 = height - 1;
+	int widthm1 = width - 1;
+	int r, c; // 타겟 이미지 좌표
+	float r_orgr, r_orgc; // 원 이미지 상의 해당 좌표 (실수값)
+	int i_orgr, i_orgc; // 원 이미지 상의 해당 좌표 (정수값)
+	float sr, sc; // 예 1.24 - 1 = 0.24
+	float l1, l2, l3, l4;
+
+	for (r = 0; r < height; r++)
+	{
+		for (c = 0; c < width; c++)
+		{
+			r_orgr = r / zoomoutfactor;
+			r_orgc = c / zoomoutfactor;
+			i_orgr = floor(r_orgr);
+			i_orgc = floor(r_orgc);
+			sr = r_orgr - i_orgr;
+			sc = r_orgc - i_orgc;
+
+			// 범위 조사
+			// 원 이미지의 범위를 벗어나는 경우 0값 할당
+			if (i_orgr<0 || i_orgr>heightm1 || i_orgc<0 || i_orgc>widthm1)
+			{
+				m_OutImg[r][c] = 0;
+			}
+
+			// 원 이미지의 범위 내에 존재 이중 선형 보간 수행
+			else
+			{
+				l1 = (float)m_InImg[i_orgr][i_orgc]; // (org_r, org_c)
+				l2 = (float)m_InImg[i_orgr][i_orgc + 1]; // (org_r, org_c + 1)
+				l3 = (float)m_InImg[i_orgr + 1][i_orgc + 1]; // (org_r + 1, org_c + 1)
+				l4 = (float)m_InImg[i_orgr + 1][i_orgc]; // (org_r + 1, org_c)
+
+				// 이중 선형 보간을 통한 새로운 밝기값 계산
+				m_OutImg[r][c] = (BYTE)(l1*(1 - sc)*(1 - sr) + l2 * sc*(1 - sr) + l3 * sc*sr + l4 * (1 - sc)*sr);
+			}
+		}
+	}
+}
+
+
+void CSN2020111396Doc::ZoomIn(int height, int width, float zoomoutfactor)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int heightm1 = height - 1;
+	int widthm1 = width - 1;
+	int r, c; // 타겟 이미지 좌표
+	float r_orgr, r_orgc; // 원 이미지 상의 해당 좌표 (실수값)
+	int i_orgr, i_orgc; // 원 이미지 상의 해당 좌표 (정수값)
+	float sr, sc; // 예 1.24 - 1 = 0.24
+	float l1, l2, l3, l4;
+
+	for (r = 0; r < height; r++)
+	{
+		for (c = 0; c < width; c++)
+		{
+			r_orgr = r / zoomoutfactor;
+			r_orgc = c / zoomoutfactor;
+			i_orgr = floor(r_orgr);
+			i_orgc = floor(r_orgc);
+			sr = r_orgr - i_orgr;
+			sc = r_orgc - i_orgc;
+
+			// 범위 조사
+			// 원 이미지의 범위를 벗어나는 경우 0값 할당
+			if (i_orgr<0 || i_orgr>heightm1 || i_orgc<0 || i_orgc>widthm1)
+			{
+				m_OutImg[r][c] = 0;
+			}
+
+			// 원 이미지의 범위 내에 존재 이중 선형 보간 수행
+			else
+			{
+				l1 = (float)m_InImg[i_orgr][i_orgc]; // (org_r, org_c)
+				l2 = (float)m_InImg[i_orgr][i_orgc + 1]; // (org_r, org_c + 1)
+				l3 = (float)m_InImg[i_orgr + 1][i_orgc + 1]; // (org_r + 1, org_c + 1)
+				l4 = (float)m_InImg[i_orgr + 1][i_orgc]; // (org_r + 1, org_c)
+
+				// 이중 선형 보간을 통한 새로운 밝기값 계산
+				m_OutImg[r][c] = (BYTE)(l1*(1 - sc)*(1 - sr) + l2 * sc*(1 - sr) + l3 * sc*sr + l4 * (1 - sc)*sr);
+			}
+		}
+	}
+}
+
+
+void CSN2020111396Doc::Rotation(int height, int width, int center_r, int center_c, float rotationAngle)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int heightm1 = height - 1; // 계산의 중복을 피하기 위해 사용
+	int widthm1 = width - 1; // 계산의 중복을 피하기 위해 사용
+	int r, c; // 타겟 이미지 좌표
+	float r_orgr, r_orgc; // 원 이미지 상의 해당 좌표 (실수값)
+	int i_orgr, i_orgc; // 원 이미지 상의 해당 좌표 (정수값)
+	float sr, sc; 
+	float l1, l2, l3, l4;
+	float cosAngle, sinAngle;
+	float rotationAngleRad = (float)(rotationAngle*3.14159265/180); // angle->radian으로 변환
+
+	for (r = 0; r < height; r++)
+	{
+		for (c = 0; c < width; c++)
+		{
+			cosAngle = (float)cos(rotationAngleRad);
+			sinAngle = (float)sin(rotationAngleRad);
+			// 회전 전의 원 이미지 상의 좌표 구함
+			r_orgr = -sinAngle * (c - center_c) + cosAngle * (r - center_r) + center_r;
+			r_orgc = cosAngle * (c - center_c) + sinAngle * (r - center_r) + center_c;
+			i_orgr = floor(r_orgr);
+			i_orgc = floor(r_orgc);
+			sr = r_orgr - i_orgr;
+			sc = r_orgc - i_orgc;
+
+			// 범위 조사
+			// 원 이미지의 범위를 벗어나는 경우 0값 할당
+			if (i_orgr<0 || i_orgr>heightm1 || i_orgc<0 || i_orgc>widthm1)
+			{
+				m_OutImg[r][c] = 0;
+			}
+			// 원 이미지의 범위 내에 존재 이중 선형 보간 수행
+			else
+			{
+				l1 = (float)m_InImg[i_orgr][i_orgc];
+				l2 = (float)m_InImg[i_orgr][i_orgc + 1];
+				l3 = (float)m_InImg[i_orgr + 1][i_orgc + 1];
+				l4 = (float)m_InImg[i_orgr + 1][i_orgc];
+
+				// 이중 선형 보간을 통한 새로운 밝기값 계산
+				m_OutImg[r][c] = (BYTE)(l1*(1 - sc)*(1 - sr) + l2 * sc*(1 - sr) + l3 * sc*sr + l4 * (1 - sc)*sr);
+			}
+		}
+	}
+}
+
+
+void CSN2020111396Doc::Rotation90(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int r, c; // 타겟 이미지 좌표
+	int i_orgr, i_orgc; // 원 이미지 상의 해당 좌표 (정수값)
+
+	for (r = 0; r < height; r++)
+	{
+		for (c = 0; c < width; c++)
+		{
+			i_orgc = r;
+			i_orgr = height - 1 - c;
+			m_OutImg[r][c] = m_InImg[i_orgr][i_orgc];
+		}
+	}
+}
+
+
+void CSN2020111396Doc::Translation(int height, int width, int dx, int dy)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int heightm1 = height - 1;
+	int widthm1 = width - 1;
+	int r, c; // 타겟 이미지 좌표
+	int i_orgc, i_orgr; // 원 이미지 상의 해당 좌표 (정수값)
+
+	for (r = 0; r < height; r++)
+	{
+		for (c = 0; c < width; c++)
+		{
+			i_orgc = c - dx;
+			i_orgr = r - dy;
+			if (i_orgr<0 || i_orgr>heightm1 || i_orgc<0 || i_orgc > widthm1) m_OutImg[r][c] = 0;
+			else m_OutImg[r][c] = m_InImg[i_orgr][i_orgc];
+		}
+	}
 }

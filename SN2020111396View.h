@@ -77,6 +77,12 @@ public:
 	afx_msg void OnSmoothingBox();
 	afx_msg void OnSmoothingGaussian();
 	afx_msg void OnSharpeningLaplacian();
+	afx_msg void OnEdgePrewitt();
+	afx_msg void OnZoomout();
+	afx_msg void OnZoomin();
+	afx_msg void OnRotation();
+	afx_msg void OnRotation90();
+	afx_msg void OnTranslation();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전

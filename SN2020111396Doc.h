@@ -69,4 +69,9 @@ public:
 	void m_SharpeningLaplacian(int height, int width);
 	void SmoothingGaussian(int height, int width);
 	void EdgePrewitt(int height, int width);
+	void ZoomOut(int height, int width, float zoomoutfactor);
+	void ZoomIn(int height, int width, float zoomoutfactor);
+	void Rotation(int height, int width, int center_r, int center_c, float rotationAngle);
+	void Rotation90(int height, int width);
+	void Translation(int height, int width, int dx, int dy);
 };

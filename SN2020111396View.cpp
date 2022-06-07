@@ -63,6 +63,12 @@ BEGIN_MESSAGE_MAP(CSN2020111396View, CScrollView)
 	ON_COMMAND(IDM_SMOOTHING_BOX, &CSN2020111396View::OnSmoothingBox)
 	ON_COMMAND(IDM_SMOOTHING_GAUSSIAN, &CSN2020111396View::OnSmoothingGaussian)
 	ON_COMMAND(IDM_SHARPENING_LAPLACIAN, &CSN2020111396View::OnSharpeningLaplacian)
+	ON_COMMAND(IDM_EDGE_PREWITT, &CSN2020111396View::OnEdgePrewitt)
+	ON_COMMAND(IDM_ZOOMOUT, &CSN2020111396View::OnZoomout)
+	ON_COMMAND(IDM_ZOOMIN, &CSN2020111396View::OnZoomin)
+	ON_COMMAND(IDM_ROTATION, &CSN2020111396View::OnRotation)
+	ON_COMMAND(IDM_ROTATION90, &CSN2020111396View::OnRotation90)
+	ON_COMMAND(IDM_TRANSLATION, &CSN2020111396View::OnTranslation)
 END_MESSAGE_MAP()
 
 // CSN2020111396View 생성/소멸
@@ -820,4 +826,81 @@ void CSN2020111396View::OnSharpeningLaplacian()
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	pDoc->m_SharpeningLaplacian(256, 256);
 	Invalidate(FALSE); // 화면 갱신
+}
+
+void CSN2020111396View::OnEdgePrewitt()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->EdgePrewitt(256, 256);
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnZoomout()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->ZoomOut(256, 256, 0.7);
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnZoomin()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->ZoomIn(256, 256, 1.3);
+	Invalidate(FALSE);
+}
+
+
+void CSN2020111396View::OnRotation()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->Rotation(256, 256, (256 / 2), (256 / 2), 30);
+	Invalidate(FALSE); // 화면 갱신
+}
+
+
+void CSN2020111396View::OnRotation90()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->Rotation90(256, 256);
+	Invalidate(FALSE);
+}
+
+
+void CSN2020111396View::OnTranslation()
+{
+	CSN2020111396Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	pDoc->Translation(256, 256, 50, 80);
+	Invalidate(FALSE);
 }

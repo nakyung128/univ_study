@@ -75,13 +75,20 @@
 #define IDM_SMOOTHING_GAUSSIAN          32811
 #define IDM_SHARPENING_LAPLACIAN        32812
 #define IDM_EDGE_PREWITT                32813
+#define IDM_ZOOMOUT                     32814
+#define IDM_ZOOMIN                      32815
+#define IDM_ROTATION                    32816
+#define ID_32817                        32817
+#define IDM_ROTATION90                  32818
+#define ID_32819                        32819
+#define IDM_TRANSLATION                 32820
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32814
+#define _APS_NEXT_COMMAND_VALUE         32821
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
