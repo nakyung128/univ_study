@@ -83,6 +83,7 @@ public:
 	afx_msg void OnRotation();
 	afx_msg void OnRotation90();
 	afx_msg void OnTranslation();
+	afx_msg void OnEdgeSobel();
 };
 
 #ifndef _DEBUG  // SN2020111396View.cpp의 디버그 버전

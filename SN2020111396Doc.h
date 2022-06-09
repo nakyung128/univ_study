@@ -74,4 +74,5 @@ public:
 	void Rotation(int height, int width, int center_r, int center_c, float rotationAngle);
 	void Rotation90(int height, int width);
 	void Translation(int height, int width, int dx, int dy);
+	void EdgeSobel(int height, int width);
 };

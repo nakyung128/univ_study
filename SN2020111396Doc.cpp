@@ -763,7 +763,7 @@ void CSN2020111396Doc::SmoothingGaussian(int height, int width)
 	}
 }
 
-
+// 에지 검출 (Laplacian)
 void CSN2020111396Doc::m_SharpeningLaplacian(int height, int width)
 {
 	int MaskBox[3][3] = { {-1,-1,-1}, {-1,8,-1}, {-1,-1,-1} };
@@ -945,6 +945,115 @@ void CSN2020111396Doc::EdgePrewitt(int height, int width)
 	// 동적 할당 메모리 삭제
 	delete[] pImgPrewittX;
 	delete[] pImgPrewittY;
+}
+
+// 에지 검출 (Sobel)
+void CSN2020111396Doc::EdgeSobel(int height, int width)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int MaskSobelX[3][3] = { {-1,0,1}, {-2,0,2}, {-1,0,1} };
+	int MaskSobelY[3][3] = { {-1,-2,-1}, {0,0,0}, {1,2,1} };
+
+	int heightm1 = height - 1, widthm1 = width - 1;
+	int mr, mc, i, j, newValue;
+	int *pImgSobelX, *pImgSobelY;
+	int min, max, where;
+	float constVal1, constVal2;
+
+	// 정수값을 갖는 이미지 동적 메모리 할당
+	pImgSobelX = new int[height*width];
+	pImgSobelY = new int[height*width];
+
+	// 결과 이미지 0으로 초기화
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			m_OutImg[i][j] = 0;
+			where = i * width + j;
+			pImgSobelX[where] = 0;
+			pImgSobelY[where] = 0;
+		}
+	}
+
+	// X 방향 에지 강도 계산
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskSobelX[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			pImgSobelX[i*width + j] = newValue;
+		}
+	}
+
+	// Y 방향 에지 강도 계산
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = 0; // 0으로 초기화
+			for (mr = 0; mr < 3; mr++)
+			{
+				for (mc = 0; mc < 3; mc++)
+				{
+					newValue += (MaskSobelY[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
+				}
+			}
+			pImgSobelY[i*width + j] = newValue;
+		}
+	}
+
+	// 에지 강도 계산 절대값(X) + 절대값(Y) 후 pImgSobelX[]에 저장
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			where = i * width + j;
+			constVal1 = pImgSobelX[where];
+			constVal2 = pImgSobelY[where];
+			if (constVal1 < 0) constVal1 = -constVal1;
+			if (constVal2 < 0) constVal2 = -constVal2;
+			pImgSobelX[where] = constVal1 + constVal2;
+		}
+	}
+
+	// 디스플레이를 위해 0에서 255 사이로 값의 범위를 매핑
+	// 이를 위해 먼저 최대, 최소값을 찾은 후 이를 이용하여 매핑한다
+	min = (int)10e10;
+	max = (int)-10e10;
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = pImgSobelX[i*width + j];
+			if (newValue < min) min = newValue;
+			if (newValue > max) max = newValue;
+		}
+	}
+
+	// 변환 시 상수값을 미리 계산
+	constVal1 = (float)(255.0 / (max - min));
+	constVal2 = (float)(-255.0*min / (max - min));
+	for (i = 1; i < heightm1; i++)
+	{
+		for (j = 1; j < widthm1; j++)
+		{
+			newValue = pImgSobelX[i*width + j];
+			newValue = constVal1 * newValue + constVal2;
+			m_OutImg[i][j] = (BYTE)newValue;
+		}
+	}
+
+	// 동적 할당 메모리 해제
+	delete[] pImgSobelX;
+	delete[] pImgSobelY;
 }
 
 
