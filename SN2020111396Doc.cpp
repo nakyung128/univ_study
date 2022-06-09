@@ -177,6 +177,7 @@ void CSN2020111396Doc::m_ImgHisto(int height, int width)
 {
 	// TODO: 여기에 구현 코드 추가.
 	int i, j, gv, vmax, vmin;
+
 	// 히스토그램 생성
 	for (i = 0; i < 256; i++) m_HistoArr[i] = 0; // 히스토그램 배열 초기화
 	for (i = 0; i < height; i++)
@@ -756,7 +757,7 @@ void CSN2020111396Doc::SmoothingGaussian(int height, int width)
 					newValue += (MaskBox[mr][mc] * m_InImg[i + mr - 1][j + mc - 1]);
 				}
 			}
-			newValue /= 9; // 마스크의 합의 크기로 나누기: 값의 범위를 0에서 255로 함
+			newValue /= 16; // 마스크의 합의 크기로 나누기: 값의 범위를 0에서 255로 함
 			m_OutImg[i][j] = (BYTE)newValue; // BYTE 값으로 변환
 		}
 	}
@@ -921,7 +922,7 @@ void CSN2020111396Doc::EdgePrewitt(int height, int width)
 	{
 		for (j = 1; j < widthm1; j++)
 		{
-			newValue += pImgPrewittX[i*width + j];
+			newValue = pImgPrewittX[i*width + j];
 			if (newValue < min) min = newValue;
 			if (newValue > max) max = newValue;
 		}
