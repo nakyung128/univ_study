@@ -2857,7 +2857,7 @@ MonoBehaviour:
   currentHp: 0
   atk: 5
   def: 10
-  dmgSound: attack_sound
+  dmgSound: 
 --- !u!114 &1090697048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3779,7 +3779,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e3d5dc70d23d840a1ac8fc9e17062f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 15
+  hp: 30
   currentHp: 0
   atk: 5
   def: 1
