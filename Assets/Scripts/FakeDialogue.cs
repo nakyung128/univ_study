@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Event1 : MonoBehaviour
+public class FakeDialogue : MonoBehaviour
 {
 
     public Dialogue dialogue_1;
@@ -12,8 +12,6 @@ public class Event1 : MonoBehaviour
     private OrderManager theOrder;
     private PlayerManager thePlayer; // DirY = 1일 때 (위쪽 바라볼 때)
     private FadeManager theFade;
-
-    private bool flag; // 한 번 보면 다시 못 보게 함. 이거는 나중에 뺄지 말지 얘기해 보아야 할 듯.
 
     // Start is called before the first frame update
     void Start()
@@ -24,11 +22,10 @@ public class Event1 : MonoBehaviour
         theFade = FindObjectOfType<FadeManager>();
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!flag && thePlayer.animator.GetFloat("DirY") == 1f) // 캐릭터가 위를 바라볼 때
+        if (collision.gameObject.name == "Player")
         {
-            flag = true; // 실행됨
             StartCoroutine(EventCoroutine());
         }
     }
