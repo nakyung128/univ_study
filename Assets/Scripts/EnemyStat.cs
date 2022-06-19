@@ -21,7 +21,7 @@ public class EnemyStat : MonoBehaviour
     {
         int playerAtk = _playerAtk;
         int dmg;
-        if (def >= playerAtk) dmg = 1;
+        if (def >= playerAtk) dmg = 2;
         else dmg = playerAtk - def;
 
         currentHp -= dmg;

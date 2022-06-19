@@ -17,9 +17,9 @@ public class HurtEnemy : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            int dmg = collision.gameObject.GetComponent<EnemyStat>().Hit(thePlayerStat.atk);
-            Debug.Log("우치가 강아지를 공격하고 있습니다!");
-            AudioManager.instance.Play(atkSound);
+              int dmg = collision.gameObject.GetComponent<EnemyStat>().Hit(thePlayerStat.atk);
+              Debug.Log("우치가 강아지를 공격하고 있습니다!");
+              AudioManager.instance.Play(atkSound);
         }
     }
 

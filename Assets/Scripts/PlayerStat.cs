@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class PlayerStat : MonoBehaviour
     public int atk; // 공격력
     public int def; // 방어력
 
-    public string dmgSound;
+    public Slider hpSlider;
 
     // Start is called before the first frame update
     void Start()
@@ -31,16 +32,8 @@ public class PlayerStat : MonoBehaviour
 
         if (currentHp <= 0) Debug.Log("체력 0 미만, 게임 오버...");
 
-        AudioManager.instance.Play(dmgSound);
-
         StopAllCoroutines();
         StartCoroutine(HitCoroutine());
-
-       /* Vector3 vector = this.transform.position;
-        vector.y += 60; // 캐릭터 머리 위에 띄워지도록
-
-        GameObject clone = Instantiate(prefabs_Floating_text, vector, Quaternion.Euler(Vector3.zero));
-        clone.GetComponent<FloatingText>().text.text = dmg.ToString();*/
     }
 
     IEnumerator HitCoroutine()
@@ -68,6 +61,8 @@ public class PlayerStat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        hpSlider.maxValue = hp;
+
+        hpSlider.value = currentHp;
     }
 }

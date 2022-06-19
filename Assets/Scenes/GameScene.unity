@@ -2856,8 +2856,8 @@ MonoBehaviour:
   hp: 100
   currentHp: 0
   atk: 5
-  def: 10
-  dmgSound: 
+  def: 5
+  hpSlider: {fileID: 1716253716}
 --- !u!114 &1090697048
 MonoBehaviour:
   m_ObjectHideFlags: 0
