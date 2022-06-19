@@ -939,7 +939,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.23
+  m_Volume: 0.26
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2660,6 +2660,7 @@ GameObject:
   - component: {fileID: 1090697042}
   - component: {fileID: 1090697046}
   - component: {fileID: 1090697047}
+  - component: {fileID: 1090697048}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -2759,6 +2760,7 @@ MonoBehaviour:
   walkSound_4: footsteps 4
   runSpeed: 2.4
   notMove: 0
+  attackDelay: 0.5
 --- !u!95 &1090697043
 Animator:
   serializedVersion: 3
@@ -2853,9 +2855,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 100
   currentHp: 0
-  atk: 0
+  atk: 5
   def: 10
   dmgSound: attack_sound
+--- !u!114 &1090697048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090697039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f29b2fb958acf43b73fd1fd806cc09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atkSound: attack_sound2
 --- !u!1 &1110044055
 GameObject:
   m_ObjectHideFlags: 0
@@ -3606,9 +3621,10 @@ GameObject:
   - component: {fileID: 1619533480}
   - component: {fileID: 1619533484}
   - component: {fileID: 1619533485}
+  - component: {fileID: 1619533486}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3751,6 +3767,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &1619533486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619533479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e3d5dc70d23d840a1ac8fc9e17062f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 15
+  currentHp: 0
+  atk: 5
+  def: 1
+  dmgSound: attak_sound2
 --- !u!1 &1619844378
 GameObject:
   m_ObjectHideFlags: 0
@@ -3923,6 +3956,10 @@ MonoBehaviour:
     loop: 0
   - name: attack_sound
     clip: {fileID: 8300000, guid: 65889d2d8d24e4f43bff66afb409268e, type: 3}
+    Volumn: 0.5
+    loop: 0
+  - name: attack_sound2
+    clip: {fileID: 8300000, guid: 651e44d74cef30d4b94a5dbe6089c4b9, type: 3}
     Volumn: 0.5
     loop: 0
 --- !u!1 &1694277431

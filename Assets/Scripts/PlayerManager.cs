@@ -22,18 +22,17 @@ public class PlayerManager : MovingObject
     private bool canMove = true;
     public bool notMove = false;
 
+    private bool attacking = false;
+    public float attackDelay;
+    private float currentAttackDelay;
+
     //speed * walkCount = pixel 단위
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         if (instance == null)
         {
-            queue = new Queue<string>();
-            DontDestroyOnLoad(this.gameObject);     //player 파괴 방지
-            boxCollider = GetComponent<BoxCollider2D>();
-            animator = GetComponent<Animator>();    //component 통제
-            theAudio = FindObjectOfType<AudioManager>();
+            DontDestroyOnLoad(this.gameObject);
             instance = this;
         }
         else
@@ -42,9 +41,19 @@ public class PlayerManager : MovingObject
         }
     }
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        queue = new Queue<string>();
+        DontDestroyOnLoad(this.gameObject);     //player 파괴 방지
+        boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();    //component 통제
+        theAudio = FindObjectOfType<AudioManager>();
+    }
+
     IEnumerator MoveCoroutine()
     {
-        while (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0 && !notMove)
+        while (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0 && !notMove && !attacking)
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -144,13 +153,33 @@ public class PlayerManager : MovingObject
         // 상 방향키: 1 리턴, 하 방향키: -1 리턴
 
         // 좌, 우, 상, 하 방향키 눌렸을 경우
-        if (canMove && !notMove)
+        if (canMove && !notMove && !attacking)
         {
             if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
                 canMove = false;    //coroutine 반복실행 방지
                 StartCoroutine(MoveCoroutine());    //coroutine 실행
 
+            }
+        }
+
+        if (!notMove && !attacking)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                currentAttackDelay = attackDelay;
+                attacking = true;
+                animator.SetBool("Attacking", true);
+            }
+        }
+
+        if (attacking)
+        {
+            currentAttackDelay -= Time.deltaTime;
+            if (currentAttackDelay <= 0)
+            {
+                animator.SetBool("Attacking", false);
+                attacking = false;
             }
         }
     }

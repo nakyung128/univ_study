@@ -9,6 +9,8 @@ public class EnemyStat : MonoBehaviour
     public int atk;
     public int def;
 
+    public string dmgSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +28,7 @@ public class EnemyStat : MonoBehaviour
 
         if (currentHp <= 0)
         {
+            Debug.Log("우치가 강아지를 물리쳤습니다!");
             Destroy(this.gameObject); // 파괴
         }
 
