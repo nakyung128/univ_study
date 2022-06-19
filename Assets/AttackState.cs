@@ -16,7 +16,8 @@ public class AttackState : StateMachineBehaviour
     // 상태 진행
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        Debug.Log("강아지가 우치를 공격하고 있습니다!");
+        PlayerStat.instance.Hit(1);
     }
 
     // 상태 종료
